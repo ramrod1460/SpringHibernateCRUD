@@ -2,20 +2,25 @@ package com.springbootjpa.web;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springbootjpa.exception.RecordNotFoundException;
 import com.springbootjpa.model.EmployeeEntity;
 import com.springbootjpa.service.EmployeeService;
+
  
 @RestController
 @RequestMapping("/employees")
@@ -40,7 +45,7 @@ public class EmployeeController
     }
  
     @PostMapping
-    public ResponseEntity<EmployeeEntity> createOrUpdateEmployee(EmployeeEntity employee)
+    public ResponseEntity<EmployeeEntity> createOrUpdateEmployee(@Valid @NonNull @RequestBody EmployeeEntity employee)
                                                     throws RecordNotFoundException {
         EmployeeEntity updated = service.createOrUpdateEmployee(employee);
         return new ResponseEntity<EmployeeEntity>(updated, new HttpHeaders(), HttpStatus.OK);
