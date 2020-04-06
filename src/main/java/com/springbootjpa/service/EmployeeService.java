@@ -1,5 +1,6 @@
 package com.springbootjpa.service;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,22 +43,23 @@ public class EmployeeService {
     public EmployeeEntity createOrUpdateEmployee(EmployeeEntity entity) throws RecordNotFoundException
     {
 
-        Optional<EmployeeEntity> employee = repository.findById(entity.getId());
-         
-        if(employee.isPresent()) {
-            EmployeeEntity newEntity = employee.get();
-            newEntity.setEmail(entity.getEmail());
-            newEntity.setFirstName(entity.getFirstName());
-            newEntity.setLastName(entity.getLastName());
- 
-            newEntity = repository.save(newEntity);
-             
-            return newEntity;
+        Optional<EmployeeEntity> employee;
+        if (entity.getId() == null) {
+            employee = Optional.of(new EmployeeEntity());
         } else {
-            entity = repository.save(entity);
-             
-            return entity;
+            employee = repository.findById(entity.getId());
         }
+
+
+        EmployeeEntity ent = employee.orElseThrow(() -> new RecordNotFoundException(
+                MessageFormat.format("EmployeeEntity with id {0} does not exist", entity.getId())));
+        ent.setEmail(entity.getEmail());
+        ent.setFirstName(entity.getFirstName());
+        ent.setLastName(entity.getLastName());
+
+        ent = repository.save(ent);
+
+        return ent;
     }
      
     public void deleteEmployeeById(Long id) throws RecordNotFoundException
